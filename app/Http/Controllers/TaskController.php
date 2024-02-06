@@ -10,7 +10,7 @@ class TaskController extends Controller
 
 public function index()
 {
-    $task = DB::table('tasks')->get();
+    $task = DB::table('tasks')->orderByDesc('updated_at')->simplePaginate(8);
     return view('tasks', ['task' => $task]);
 }
 
@@ -18,6 +18,12 @@ public function show($id)
 {
     $task = DB::table('tasks')->find($id);
     return view('taskshow', ['task' => $task]);
+}
+
+public function edit($id)
+{
+    $task = DB::table('tasks')->find($id);
+    return view('taskedit', ['task' => $task]);
 }
 
 public function store(Request $request)
@@ -35,6 +41,63 @@ public function store(Request $request)
     $task->save();
 
     return redirect()->back()->with('success', 'Task stored successfully!');
+}
+
+public function update(Request $request, string $id)
+{
+    $request->validate([
+        'title' => 'required|max:120',
+        'short_desc' => 'required',
+        'long_desc' => 'required'
+    ]);
+
+    $task = DB::table('tasks')->where('id',$id);
+
+    if($task){
+
+        $task->update([
+
+            'title' => $request->title,
+            'description' => $request->short_desc,
+            'long_description' => $request->long_desc,
+
+        ]);
+    
+        return redirect()->back()->with('success', 'Task updated successfully!');
+
+    }else{
+
+        return redirect()->back()->with('failed', 'Task not found!');
+
+    }
+}
+
+public function complete(string $id)
+{
+    $task = DB::table('tasks')->where('id',$id);
+
+    if($task){
+
+        $task->update([
+
+            'completed' => '1',
+
+        ]);
+    
+        return redirect()->back()->with('success', 'Task marked completed!');
+
+    }else{
+
+        return redirect()->back()->with('failed', 'Task not found!');
+
+    }
+}
+
+public function destroy($id)
+{
+    $task = DB::table('tasks')->where('id', $id);
+    $task->delete();
+    return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
 }
 
 }

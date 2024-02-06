@@ -30,7 +30,9 @@
                     @endauth
                 </div>
             @endif
-
+                <div>
+                    <h1 style="font-size:40px; font-weight:700; color:#eee;">Laravel Learning</h1>
+                </div>
             
         </div>
     </body>
