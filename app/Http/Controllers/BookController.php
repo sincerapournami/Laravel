@@ -9,9 +9,10 @@ class BookController extends Controller
 {
 
     public function index()
-    {
-        return view('books');
-    }
+{
+    $book = DB::table('books')->orderByDesc('updated_at')->simplePaginate(8);
+    return view('books', ['book' => $book]);
+}
 
 }
 
